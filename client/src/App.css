@@ -1,0 +1,36 @@
+html, body, #root, #root > div {
+    height: 100%;
+}
+
+.font-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    word-break: keep-all;
+}
+
+.font-weight-lg {
+    font-family: 'Noto Sans KR', sans-serif;
+    word-break: keep-all;
+    font-weight: 700 !important;
+}
+.font-weight-md {
+    font-family: 'Noto Sans KR', sans-serif;
+    word-break: keep-all;
+    font-weight: 500 !important;
+}
+
+.card-title{
+    font-family: 'Noto Sans KR', sans-serif;
+
+}
+
+.form-textarea{
+    border: none !important;
+}
+
+body.swal2-height-auto {
+    height: initial !important;
+}
+
+.swal2-container.swal2-center>.swal2-popup {
+    border-radius: 10px;
+}

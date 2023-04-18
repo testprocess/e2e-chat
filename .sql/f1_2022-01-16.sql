@@ -1,0 +1,35 @@
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(20) DEFAULT NULL,
+  `user_pw` varchar(400) DEFAULT NULL,
+  `user_email` varchar(40) DEFAULT NULL,
+  `user_auth` int(3) unsigned DEFAULT 0,
+  PRIMARY KEY (`idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `feeds` (
+  `idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `feed_content` varchar(1000) DEFAULT '''''',
+  `feed_owner` varchar(30) DEFAULT NULL,
+  `feed_date` varchar(50) DEFAULT NULL,
+  `feed_type` int(2) DEFAULT NULL,
+  PRIMARY KEY (`idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+
+
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
