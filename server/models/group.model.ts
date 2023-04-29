@@ -38,6 +38,19 @@ const groupModel = {
             return { status: 0 }
         }
     },
+
+    read: async function () {
+        try {
+            const groupRepository = AppDataSource.getRepository(Group);
+            const getGroups = await groupRepository.find()
+    
+            return { status: 1, result: getGroups }
+    
+        } catch (err) {
+            console.log(err)
+            return { status: 0 }
+        }
+    },
 }
 
 export { groupModel }

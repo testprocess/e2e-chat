@@ -25,7 +25,7 @@ const groupController = {
     },
 
     delete: async function  (req, res) {
-        const groupUUID = req.body.uuid
+        const groupUUID = req.params.uuid
         const groupOwner = req.auth.userid
 
         await groupModel.delete({
@@ -34,6 +34,12 @@ const groupController = {
         })
 
         res.status(200).json({ status:1 })
+    },
+
+    read: async function  (req, res) {
+        const getGroups = await groupModel.read()
+
+        res.status(200).json({ status:1, groups: getGroups.result })
     },
 }
 
