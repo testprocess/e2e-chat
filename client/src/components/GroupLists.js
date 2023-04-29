@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import GroupItem from "./GroupItem.js"
 import { default as axios } from 'axios';
 
 function GroupLists() {
@@ -43,7 +44,7 @@ function GroupLists() {
     return (
         <div>
             <b class="input-text">Group List</b>
-            {groups.map((group) => (<b>{group.groupName}</b>))}
+            {groups.map((group) => (<GroupItem groupName={group.groupName} groupDescription={group.groupDescription} groupUUID={group.groupUUID}></GroupItem>))}
         </div>
     );
   }

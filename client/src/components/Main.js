@@ -31,8 +31,8 @@ function Main() {
                 <div className="row gx-5 justify-content-center">
                     <div className="col-lg-7">
                         <div className="text-center mt-5">
-                            <h1 className="display-5 fw-bolder text-dark font-weight-lg mb-2">더 모던하고 깔끔한 게시판의 세계로</h1>
-                            <p className="font-weight-sm mb-4 mt-3">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit!</p>
+                            <h1 className="display-5 fw-bolder text-dark font-weight-lg mb-2">개인정보는 반드시 보호되어야 하니까</h1>
+                            <p className="font-weight-sm mb-4 mt-3">종단간 암호화가 적용된 오픈소스 기반 채팅 플랫폼 입니다. </p>
                         </div>
                         <ButtonBox isLogin={isLogin}></ButtonBox>
 

@@ -22,6 +22,7 @@ const App = () => {
 
                 <Route path="/auth/login" component={LoginPage} />
                 <Route path="/auth/signup" component={SignupPage} />
+                <Route path="/chat/*" component={RootPage} />
 
                 <Route path='*' component={NotfoundPage} />
             </Switch>
