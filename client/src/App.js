@@ -4,7 +4,15 @@ import RootPage from './pages/Root.js'
 import SignupPage from './pages/Signup.js'
 import LoginPage from './pages/Login.js'
 import NotfoundPage from './pages/Notfound.js'
+
 import './App.css'
+
+const socket = io();
+
+
+socket.emit('init', {
+    uuid: 'test'
+})
 
 const App = () => {
     return (
