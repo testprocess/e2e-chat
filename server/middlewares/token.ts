@@ -14,6 +14,9 @@ const tokenMiddleware = {
   
       let decoded = jwt.verify(token, jwtSecret);
       let userId = decoded.user_id;
+      req.auth.userid = userId
+      req.auth.token = token
+
       next()
     } catch (error) {
       res.status(401).json({status:0,msg:"증명 에러"})
