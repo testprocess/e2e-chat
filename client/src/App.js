@@ -4,6 +4,7 @@ import RootPage from './pages/Root.js'
 import SignupPage from './pages/Signup.js'
 import LoginPage from './pages/Login.js'
 import NotfoundPage from './pages/Notfound.js'
+import ChatPage from './pages/Chat.js'
 
 import './App.css'
 
@@ -22,7 +23,7 @@ const App = () => {
 
                 <Route path="/auth/login" component={LoginPage} />
                 <Route path="/auth/signup" component={SignupPage} />
-                <Route path="/chat/*" component={RootPage} />
+                <Route path="/chat/*" component={ChatPage} />
 
                 <Route path='*' component={NotfoundPage} />
             </Switch>
