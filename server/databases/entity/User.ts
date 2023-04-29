@@ -18,7 +18,7 @@ export class User {
     userAuthLevel: number;
 
     @Column({ type: "varchar", length: 800 })
-    userPublicKey: string;
+    userPublicKey: string = '';
 
     @Column({ type: "varchar", length: 50 })
     createdAt: string;

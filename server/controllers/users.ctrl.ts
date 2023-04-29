@@ -5,13 +5,14 @@ import { userModel } from '../models/users.model.js';
 
 const userController = {
     create: async function  (req, res) {
-        let userId = Buffer.from(req.body.user_id, "base64").toString('utf8');
-        let userPassword = Buffer.from(req.body.user_pw, "base64").toString('utf8');
-        let userEmail = Buffer.from(req.body.user_email, "base64").toString('utf8');
-    
-        let isAvailable = await userService.checkAvailableUser({ userId: userId, userEmail: userEmail })
-        let getUser = await userModel.read({ userId, userEmail })
-        let isDuplicate = getUser.status
+        const userId = Buffer.from(req.body.user_id, "base64").toString('utf8');
+        const userPassword = Buffer.from(req.body.user_pw, "base64").toString('utf8');
+        const userEmail = Buffer.from(req.body.user_email, "base64").toString('utf8');
+        const createdAt = Date.now()
+
+        const isAvailable = await userService.checkAvailableUser({ userId: userId, userEmail: userEmail })
+        const getUser = await userModel.read({ userId, userEmail })
+        const isDuplicate = getUser.status
     
         if (String(userPassword).length <= 7) {
             return res.status(200).json({status: 2})
@@ -20,18 +21,19 @@ const userController = {
             return res.status(200).json({status:0})
         }
     
-        let getUserPasswordHash = await userService.encryptPassword({ userPassword: userPassword })
-        let userPasswordHash = getUserPasswordHash.userPasswordHash
+        const getUserPasswordHash = await userService.encryptPassword({ userPassword: userPassword })
+        const userPasswordHash = getUserPasswordHash.userPasswordHash
     
-        let data = await userModel.create({ 
+        await userModel.create({ 
             userId: userId, 
             userPasswordHash: userPasswordHash, 
-            userEmail: userEmail 
+            userEmail: userEmail,
+            createdAt: createdAt
         })
     
-        let isGrantAuthorization: any = await userModel.update({ userId: userId, auth: 1 });
-        let getJwtToken = await userService.grantToken({ userId: userId });
-        let createdToken = getJwtToken.userJwtToken
+        const isGrantAuthorization: any = await userModel.update({ userId: userId, auth: 1 });
+        const getJwtToken = await userService.grantToken({ userId: userId });
+        const createdToken = getJwtToken.userJwtToken
 
         if (isGrantAuthorization.status == 0) {
             return res.status(401).json({status:0})
