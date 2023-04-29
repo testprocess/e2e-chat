@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { default as axios } from 'axios';
 
 function GroupLists() {
     
@@ -20,17 +20,24 @@ function GroupLists() {
 
     const getGroups = async () => {
         let token = Cookies.get("user")
-        let response = await fetch("/api/group", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "x-access-token": token
-            }
-        });
 
-        let data = await response.json();
+        const getPromise = new Promise((resolve, reject) => {
+            axios({
+                method: 'get',
+                url: '/api/group',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', 
+                    "x-access-token": token
+                }
+            })
+            .then(async (response) => {
+                let data = response.data
+                resolve(data.groups)
+            });
+        })
 
-        return data.groups
+
+        return getPromise        
     }
 
     return (

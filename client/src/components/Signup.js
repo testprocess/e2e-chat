@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { default as axios } from 'axios';
 
 
 function Signup() {
@@ -15,6 +16,34 @@ function Signup() {
     const userPwRef = useRef();
 
 
+    const showToast = ({ response }) => {
+    
+      if (response.status == 1) {
+        Cookies.set('user', response.token)
+
+        dds.toast({
+            content: '가입에 성공했어요'
+        })
+
+        setTimeout(() => {
+            location.href = '/'
+        }, 1200);
+    } else if (response.status == 2) { // 비번 8자리
+        dds.toast({
+            content: '바밀번호는 8자리 이상이여야 해요'
+        })
+    } else if (response.status == 5) { // 특수문자
+        dds.toast({
+            content: '아이디에 특수문자는 입력할 수 없어요'
+        })
+
+    } else if (response.status == 0) {
+        dds.toast({
+            content: '사용 불가한 아이디 또는 이메일이에요'
+        })
+    }
+    }
+
     async function signup() {
         try {
             let user_id = btoa(userId);
@@ -27,46 +56,25 @@ function Signup() {
                 })
             }
         
-            let response = await fetch("/api/users", {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `user_id=${user_id}&user_pw=${user_pw}&user_email=${user_email}`
+            axios({
+              method: 'post',
+              url: '/api/users',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              data: {
+                user_id: user_id,
+                user_pw: user_pw,
+                user_email: user_email
+              }
+            }).then(async (response) => {
+              showToast({ response: response.data })
             });
-        
-            let data = await response.json();
-    
-            if (data.status == 1) {
-                Cookies.set('user', data.token)
-
-                dds.toast({
-                    content: '가입에 성공했어요'
-                })
-
-                setTimeout(() => {
-                    location.href = '/'
-                }, 1200);
-            } else if (data.status == 2) { // 비번 8자리
-                dds.toast({
-                    content: '바밀번호는 8자리 이상이여야 해요'
-                })
-            } else if (data.status == 5) { // 특수문자
-                dds.toast({
-                    content: '아이디에 특수문자는 입력할 수 없어요'
-                })
-
-            } else if (data.status == 0) {
-                dds.toast({
-                    content: '사용 불가한 아이디 또는 이메일이에요'
-                })
-            }
         } catch (error) {
             console.log(error)
             dds.toast({
                 content: '에러가 발생했어요'
             })
-
         }
     }
 

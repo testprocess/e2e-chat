@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { default as axios } from 'axios';
 
 
 function Login() {
@@ -10,31 +11,17 @@ function Login() {
   const { userId, userPw } = inputs;
 
 
+  const showToast = ({ response }) => {
+    if (response.status == 1) {
+      Cookies.set('user', response.token)
+      dds.toast({
+          content: '로그인에 성공했어요'
+      })
 
-  async function login() {
-    let user_id = btoa(userId);
-    let user_pw = btoa(userPw);
-        
-    let response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `user_id="${user_id}"&user_pw="${user_pw}"`
-    });
-
-    let data = await response.json();
-
-    if (data.status == 1) {
-        Cookies.set('user', data.token)
-        dds.toast({
-            content: '로그인에 성공했어요'
-        })
-
-        setTimeout(() => {
-            location.href = '/'
-        }, 1400);
-    } else if (data.status == -1) {
+      setTimeout(() => {
+          location.href = '/'
+      }, 1400);
+    } else if (response.status == -1) {
         dds.toast({
             content: '탈퇴한 회원이거나 권한이 없어요'
         })
@@ -43,6 +30,26 @@ function Login() {
             content: '로그인 정보가 맞지 않아요'
         })
     } 
+  }
+
+  async function login() {
+    let user_id = btoa(userId);
+    let user_pw = btoa(userPw);
+
+    axios({
+      method: 'post',
+      url: '/api/auth/login',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        user_id: user_id,
+        user_pw: user_pw
+      }
+    }).then(async (response) => {
+      showToast({ response: response.data })
+    });
+
 }
 
 
