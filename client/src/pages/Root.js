@@ -1,6 +1,7 @@
 import React from "react";
 import Main from "../components/Main.js"
 import CreateGroup from "../components/CreateGroup.js"
+import GroupLists from "../components/GroupLists.js"
 
 
 function RootPage() {
@@ -9,6 +10,7 @@ function RootPage() {
         <div>
             <Main></Main>
             <CreateGroup></CreateGroup>
+            <GroupLists></GroupLists>
         </div>
     );
   }
