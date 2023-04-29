@@ -22,7 +22,19 @@ const groupController = {
         })
 
         res.status(200).json({ status:1 })
-    }
+    },
+
+    delete: async function  (req, res) {
+        const groupUUID = req.body.uuid
+        const groupOwner = req.auth.userid
+
+        await groupModel.delete({
+            groupOwner: groupOwner,
+            groupUUID: groupUUID
+        })
+
+        res.status(200).json({ status:1 })
+    },
 }
 
 export { groupController }
