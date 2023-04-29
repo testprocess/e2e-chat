@@ -13,8 +13,13 @@ export class User {
 
     @Column({ nullable: false })
     userEmail: string;
-
+    
     @Column()
     userAuthLevel: number;
 
+    @Column({ type: "varchar", length: 800 })
+    userPublicKey: string;
+
+    @Column({ type: "varchar", length: 50 })
+    createdAt: string;
 }

@@ -5,7 +5,8 @@ import { createConnection } from 'mysql2';
 import data from '../config/database.js';
 
 import { User } from './entity/User.js'
-import { Feed } from './entity/Feed.js'
+import { Group } from './entity/Group.js'
+import { GroupUsers } from './entity/GroupUsers.js'
 
 const MySQLConnect = createConnection({
   host     : data[ process.env.NODE_ENV ].host,
@@ -25,7 +26,7 @@ const AppDataSource = new DataSource({
   database: data[ process.env.NODE_ENV ].database,
   synchronize: true,
   logging: true,
-  entities: [ User, Feed ],
+  entities: [ User, Group, GroupUsers ],
   subscribers: [],
   migrations: [],
 })
