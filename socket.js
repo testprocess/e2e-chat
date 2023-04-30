@@ -11,19 +11,8 @@ export async function socket (io) {
 
         socket.on("send", (data) => {
             console.log(data.uuid, data.message)
-            io.of('/chats').to(data.uuid).emit("receive", { message: data.message });
+            io.of('/chats').to(data.uuid).emit("receive", { message: data.message, userName: data.userName });
         })
     });
 
-    // io.on("connection", (socket) => {
-
-
-
-    //     //socket.emit("connected", player)
-
-    //     socket.on("init", (data) => {
-    //         console.log(data)
-    //     })
-
-    // });
 }
