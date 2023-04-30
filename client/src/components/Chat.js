@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-const socket = io("/chats");
+const socket = io("/chats", {
+    auth: {
+        token: Cookies.get("user")
+    }
+});
 
 const getUserName = () => {
     let token = Cookies.get("user")

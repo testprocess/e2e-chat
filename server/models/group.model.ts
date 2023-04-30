@@ -71,6 +71,23 @@ const groupUserModel = {
             return { status: 0 }
         }
     },
+
+    select: async function ({ groupUUID, userId }) {
+        try {
+            const groupUserRepository = AppDataSource.getRepository(GroupUsers);
+            const getGroupUser = await groupUserRepository
+                .createQueryBuilder("groupusers")
+                .where("groupusers.userId = :id AND groupusers.groupUUID = :uuid", { id: userId, uuid: groupUUID })
+                .getOne()
+    
+            const status = getGroupUser == null ? 0 : 1
+            return { status: status, group: getGroupUser }
+    
+        } catch (err) {
+            console.log(err)
+            return { status: 0 }
+        }
+    },
 }
 
 export { groupModel, groupUserModel }
