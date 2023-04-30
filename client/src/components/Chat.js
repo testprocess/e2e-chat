@@ -1,6 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 const socket = io("/chats");
-const randomUserName = Math.random() 
+
+const getUserName = () => {
+    let token = Cookies.get("user")
+    try {
+        let decoded = JSON.parse(atob(token.split('.')[1]));
+        return decoded.user_id
+    } catch (error) {
+        return 'Any'
+    }
+}
+
+const thisUserName = getUserName()
 
 function ChatBox() {
     const [UUID, setUUID] = useState('')
@@ -74,7 +85,7 @@ function ChatInput(props) {
         socket.emit('send', {
             uuid: props.uuid,
             message: message,
-            userName: randomUserName
+            userName: thisUserName
         })
 
         setMessage('')
@@ -97,7 +108,7 @@ function ChatInput(props) {
 
 
 function ChatMessage({ userName, message }) {
-    if (userName == randomUserName) {
+    if (userName == thisUserName) {
         return (
             <div className="d-flex flex-row-reverse ">
                 <span className="bg-dark text-light p-2 text-end rounded">

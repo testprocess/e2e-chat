@@ -1,6 +1,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
-import { groupModel } from '../models/group.model.js';
+import { groupModel, groupUserModel } from '../models/group.model.js';
 
 
 const groupController = {
@@ -19,6 +19,12 @@ const groupController = {
             groupOwner: groupOwner,
             groupUUID: groupUUID,
             createdAt: createdAt
+        })
+
+        await groupUserModel.join({
+            groupUUID: groupUUID,
+            userId: groupOwner,
+            joinAt: createdAt
         })
 
         res.status(200).json({ status:1 })
@@ -40,6 +46,21 @@ const groupController = {
         const getGroups = await groupModel.read()
 
         res.status(200).json({ status:1, groups: getGroups.result })
+    },
+
+    join: async function  (req, res) {
+        const groupUUID = req.params.uuid
+        const userId = req.auth.userid
+        const joinAt = Date.now()
+
+        await groupUserModel.join({
+            groupUUID: groupUUID,
+            userId: userId,
+            joinAt: joinAt
+        })
+
+
+        res.status(200).json({ status:1 })
     },
 }
 

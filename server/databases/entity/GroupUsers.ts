@@ -4,8 +4,8 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 export class GroupUsers {
     @PrimaryGeneratedColumn('increment')
     idx: number;
-    
-    @Column({ type: "varchar", length: 20 })
+
+    @Column({ type: "varchar", length: 36 })
     groupUUID: string;
     
     @Column({ type: "varchar", length: 20 })

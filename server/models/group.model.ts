@@ -1,5 +1,6 @@
 import { MySQLConnect, AppDataSource } from '../databases/db.js'
 import { Group } from "../databases/entity/Group.js";
+import { GroupUsers } from "../databases/entity/GroupUsers.js";
 
 
 const groupModel = {
@@ -53,4 +54,23 @@ const groupModel = {
     },
 }
 
-export { groupModel }
+const groupUserModel = {
+    join: async function ({ groupUUID, userId, joinAt }) {
+        try {
+            const groupValues = new GroupUsers()
+            groupValues.groupUUID = groupUUID
+            groupValues.userId = userId
+            groupValues.joinAt = joinAt
+
+            const groupUserRepository = AppDataSource.getRepository(GroupUsers);
+            await groupUserRepository.save(groupValues)
+            return { status: 1 }
+    
+        } catch (err) {
+            console.log(err)
+            return { status: 0 }
+        }
+    },
+}
+
+export { groupModel, groupUserModel }

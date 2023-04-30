@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { default as axios } from 'axios';
 
 
 function CreateGroup() {
@@ -31,18 +32,21 @@ function CreateGroup() {
 
     const send = async () => {
         let token = Cookies.get("user")
-        let response = await fetch("/api/group", {
-            method: "POST",
+        axios({
+            method: 'post',
+            url: '/api/group',
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "x-access-token": token
+              'Content-Type': 'application/x-www-form-urlencoded',
+              "x-access-token": token
             },
-            body: `name="${groupName}"&description="${groupDescription}"`
+            data: {
+                name: groupName,
+                description: groupDescription
+            }
+        }).then(async (response) => {
+            console.log(response)
         });
 
-        let data = await response.json();
-
-        console.log(data)
     }
 
     return (
