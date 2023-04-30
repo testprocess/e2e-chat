@@ -8,12 +8,6 @@ import ChatPage from './pages/Chat.js'
 
 import './App.css'
 
-const socket = io();
-
-
-socket.emit('init', {
-    uuid: 'test'
-})
 
 const App = () => {
     return (

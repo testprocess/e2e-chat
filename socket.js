@@ -1,12 +1,29 @@
 
 export async function socket (io) {
-    io.on("connection", (socket) => {
+    const chatNamespace = io.of("/chats");
 
-        //socket.emit("connected", player)
-
-        socket.on("init", (data) => {
-            console.log(data)
+    chatNamespace.on("connection", (socket) => {
+        socket.on("join", (data) => {
+            console.log("Join", data.uuid)
+            socket.join(data.uuid);
         })
 
+
+        socket.on("send", (data) => {
+            console.log(data.uuid, data.message)
+            io.of('/chats').to(data.uuid).emit("receive", { message: data.message });
+        })
     });
+
+    // io.on("connection", (socket) => {
+
+
+
+    //     //socket.emit("connected", player)
+
+    //     socket.on("init", (data) => {
+    //         console.log(data)
+    //     })
+
+    // });
 }
