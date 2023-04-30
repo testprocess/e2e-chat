@@ -1,42 +1,66 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 const socket = io("/chats");
 const randomUserName = Math.random() 
 
 function ChatBox() {
     const [UUID, setUUID] = useState('')
     const [messageLists, setMessageLists] = useState([])
+    const called = useRef(false)
 
     useEffect(() => {
+        if (called.current) {
+            return
+        }
         const uuidFromPath = location.pathname.split("/")[location.pathname.split("/").length-1]
         setUUID(uuidFromPath)
         socket.emit('join', {
             uuid: uuidFromPath
         })
+
+        called.current = true
+
+        setTimeout(() => {
+            scrollToBottom()
+        }, 200);
     }, [])
 
     socket.on("receive", (data) => {
-        console.log("receive", data)
-        const chatObject = {
-            key: Math.random(),
-            message: data.message,
-            userName: data.userName
+        let lists = []
+
+        for (const key in data.chats) {
+            if (Object.hasOwnProperty.call(data.chats, key)) {
+                lists.push({
+                    key: Math.random(),
+                    message: data.chats[key].message,
+                    userName: data.chats[key].userName
+                })
+            }
         }
-        setMessageLists([...messageLists, chatObject])
+
+        setMessageLists([...messageLists, ...lists])
+
+        scrollToBottom()
     })
 
     const mapMessages = messageLists.map((element) => {
         return <ChatMessage userName={element.userName} message={element.message}></ChatMessage>
     })
 
+    const scrollToBottom = () => {
+        window.scrollTo(0, document.body.scrollHeight);
+
+    }
+
 
     return (
-        <div className="m-3">
+        <div className="m-3 padding-chat">
             {UUID}
             {mapMessages}
             <ChatInput uuid={UUID}></ChatInput>
         </div>
     );
 }
+
 
 function ChatInput(props) {
     const [message, setMessage] = useState('')
@@ -70,6 +94,7 @@ function ChatInput(props) {
     )
     
 }
+
 
 function ChatMessage({ userName, message }) {
     if (userName == randomUserName) {

@@ -3,7 +3,7 @@ import express from 'express';
 import * as loaderExpress from './loaders/express.js';
 import * as loaderSocket from './loaders/socketio.js';
 
-import * as serverSocket from './socket.js';
+import * as serverSocket from './dist/socket.js';
 
 
 async function startExpressServer() {

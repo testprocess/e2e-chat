@@ -31,6 +31,10 @@ html, body, #root, #root > div {
     font-size: 20px;
 }
 
+.padding-chat {
+    padding-bottom: 8rem;
+}
+
 body.swal2-height-auto {
     height: initial !important;
 }
