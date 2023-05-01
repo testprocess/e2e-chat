@@ -40,6 +40,7 @@ const authController = {
     me: async function (req, res) {
         const token = req.headers['x-access-token'];
         const data = await userService.transformTokentoUserid({ token: token })
+
         res.status(200).json({status:1, user_id:data})
     }
 }

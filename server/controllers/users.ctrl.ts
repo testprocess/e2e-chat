@@ -1,5 +1,6 @@
 
 import { userService } from '../services/users.serv.js';
+import { rsaService } from '../services/rsa.serv.js';
 
 import { userModel } from '../models/users.model.js';
 
@@ -23,11 +24,13 @@ const userController = {
     
         const getUserPasswordHash = await userService.encryptPassword({ userPassword: userPassword })
         const userPasswordHash = getUserPasswordHash.userPasswordHash
+        const key = await rsaService.generateKey()
     
         await userModel.create({ 
             userId: userId, 
             userPasswordHash: userPasswordHash, 
             userEmail: userEmail,
+            userPublicKey: key.publicKey,
             createdAt: createdAt
         })
     
@@ -39,7 +42,7 @@ const userController = {
             return res.status(401).json({status:0})
         }
 
-        res.status(200).json({status:1, token: createdToken})
+        res.status(200).json({ status:1, token: createdToken, privateKey: key.privateKey })
     },
     
     

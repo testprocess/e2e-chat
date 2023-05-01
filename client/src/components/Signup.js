@@ -55,7 +55,11 @@ function Signup() {
                     content: '입력칸을 확인해주세요'
                 })
             }
-        
+
+            delayMessage("비밀번호 해싱 중...", 0)
+            delayMessage("RSA 키 생성중...", 20)
+            delayMessage("RSA 키 생성중...", 200)
+
             axios({
               method: 'post',
               url: '/api/users',
@@ -68,6 +72,8 @@ function Signup() {
                 user_email: user_email
               }
             }).then(async (response) => {
+              saveLocalStorage(`rsa_${userId}`, response.data.privateKey)
+              delayMessage("RSA 비밀키 저장 완료", 0)
               showToast({ response: response.data })
             });
         } catch (error) {
@@ -76,6 +82,18 @@ function Signup() {
                 content: '에러가 발생했어요'
             })
         }
+    }
+
+    const delayMessage = (msg, delay) => {
+      setTimeout(() => {
+        dds.toast({
+          content: msg
+        })
+      }, delay);
+    }
+
+    const saveLocalStorage = (key, value) => {
+      localStorage.setItem(key, value);
     }
 
     const userFormCheck = {
