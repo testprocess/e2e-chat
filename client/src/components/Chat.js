@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { default as axios } from 'axios';
+
 const socket = io("/chats", {
     auth: {
         token: Cookies.get("user")
@@ -16,6 +18,7 @@ const getUserName = () => {
 }
 
 const thisUserName = getUserName()
+const thisGroupUUID = location.pathname.split("/")[location.pathname.split("/").length-1]
 
 function ChatBox() {
     const [UUID, setUUID] = useState('')
@@ -36,6 +39,7 @@ function ChatBox() {
 
         setTimeout(() => {
             scrollToBottom()
+
         }, 200);
     }, [])
 
@@ -57,14 +61,106 @@ function ChatBox() {
         scrollToBottom()
     })
 
-    const mapMessages = messageLists.map((element) => {
-        return <ChatMessage userName={element.userName} message={element.message}></ChatMessage>
+    socket.on("receiveKey", async (data) => {
+        if (data.userId != thisUserName) {
+            return 0
+        }
+
+        const getPrivateKey = localStorage.getItem(`rsa_${thisUserName}`)
+        const decrypted = await decryptRsa({ privateKey: getPrivateKey, encrypted: data.key })
+        console.log(decrypted)
+
+        localStorage.setItem(`groupkey_${thisGroupUUID}`, decrypted)
+
     })
+
+    
+
+    socket.on("reqKey", async (data) => {
+        const getKey = localStorage.getItem(`groupkey_${thisGroupUUID}`)
+        if (getKey == null || data.userId == thisUserName) {
+            return 0
+        }
+
+        const getUser = await getUserInfomation({ userId: data.userId })
+
+        const userPublicKey = getUser.data.publicKey
+        const encryptedKey = await encryptRsa({ publicKey: userPublicKey, message: getKey })
+
+        console.log("reqKey", encryptedKey, userPublicKey, getUser)
+
+        socket.emit('sendKey', {
+            socketId: data.socketId,
+            uuid: thisGroupUUID,
+            userId: data.userId,
+            key: encryptedKey
+        })
+
+    })
+
+
+    const getUserInfomation = async ({ userId }) => {
+        const result = new Promise((resolve, reject) => {
+            axios({
+                method: 'get',
+                url: `/api/users/${userId}`,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', 
+                    "x-access-token": Cookies.get("user")
+                }
+            })
+            .then((response) => {
+                let data = response.data
+                resolve(data)
+            });
+        })
+
+        return result
+    }
+
+    const encryptRsa = async ({ publicKey, message }) => {
+        let encrypt = new JSEncrypt()
+        encrypt.setPublicKey(publicKey)
+        const encrypted = encrypt.encrypt(message);
+
+        console.log("encryptRsa", encrypted, publicKey, message)
+
+        return encrypted
+    }
+    
+
+    const decryptRsa = async ({ privateKey, encrypted }) => {
+        let decrypt = new JSEncrypt()
+        decrypt.setPrivateKey(privateKey)
+        const undecrypt = decrypt.decrypt(encrypted);
+
+        return undecrypt
+    }
+
+    const decryptMessage = ({ encrypted }) => {
+        try {
+            const secret = localStorage.getItem(`groupkey_${thisGroupUUID}`);
+            const message = CryptoJS.AES.decrypt(encrypted, secret, {
+                padding: CryptoJS.pad.Pkcs7,
+                mode: CryptoJS.mode.CBC
+            }).toString(CryptoJS.enc.Utf8);
+    
+            return message
+        } catch (error) {
+            return ''
+        }
+    }
 
     const scrollToBottom = () => {
         window.scrollTo(0, document.body.scrollHeight);
-
     }
+
+    const mapMessages = messageLists.map((element) => {
+        let message = decryptMessage({ encrypted: element.message })
+        return <ChatMessage userName={element.userName} message={message}></ChatMessage>
+    })
+
+
 
 
     return (
@@ -84,11 +180,16 @@ function ChatInput(props) {
         setMessage(e.target.value)
     }
 
+    const encryptMessage = (message) => {
+        const secret = localStorage.getItem(`groupkey_${props.uuid}`);
+        const encrypted = CryptoJS.AES.encrypt(message, secret).toString();
+        return encrypted
+    }
+
     const sendMessage = () => {
-        console.log(props.uuid, message)
         socket.emit('send', {
             uuid: props.uuid,
-            message: message,
+            message: encryptMessage(message),
             userName: thisUserName
         })
 
@@ -102,9 +203,9 @@ function ChatInput(props) {
     }
 
     return (
-        <div class="input-group fixed-bottom p-3">
-            <input type="text" class="form-control" value={message} onChange={handleMessage} onKeyDown={handleKeyDown} />
-            <button type="button" class="btn btn-light" onClick={sendMessage}><span class="material-symbols-outlined icon-sm">send</span></button>
+        <div className="input-group fixed-bottom p-3">
+            <input type="text" className="form-control" value={message} onChange={handleMessage} onKeyDown={handleKeyDown} />
+            <button type="button" className="btn btn-light" onClick={sendMessage}><span className="material-symbols-outlined icon-sm">send</span></button>
         </div>
     )
     

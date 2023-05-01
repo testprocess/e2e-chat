@@ -41,8 +41,10 @@ export async function socket (io) {
             if (isInGroup.status == 0) {
                 return 0
             }
-            
+
             socket.join(data.uuid);
+
+            io.of('/chats').to(data.uuid).emit("reqKey", { userId: userId, socketId: socket.id });
 
             const messages = await client.lRange(`chat_${data.uuid}`, 0, -1)
             const result = messages.map((item) => JSON.parse(item))
@@ -55,6 +57,13 @@ export async function socket (io) {
             client.lPush(`chat_${data.uuid}`, JSON.stringify(data))
             io.of('/chats').to(data.uuid).emit("receive", {chats: [{ message: data.message, userName: data.userName }]});
         })
+
+        socket.on("sendKey", (data) => {
+            console.log(data.userId, data.key)
+            io.of('/chats').to(data.socketId).emit("receiveKey", { userId: data.userId, key: data.key });
+        })
+
+        
     });
 
 }

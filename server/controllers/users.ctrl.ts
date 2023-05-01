@@ -68,7 +68,9 @@ const userController = {
                 idx: userInfo.user.idx, 
                 user_auth: userInfo.user.userAuthLevel, 
                 //user_email: userInfo.user.userEmail, 
-                user_id: userInfo.user.userId
+                user_id: userInfo.user.userId,
+                publicKey: userInfo.user.userPublicKey
+
             }
 
             if (userInfo.user.userAuthLevel <= 0) {
