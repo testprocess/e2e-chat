@@ -27,7 +27,7 @@ const groupController = {
             joinAt: createdAt
         })
 
-        res.status(200).json({ status:1 })
+        res.status(200).json({ status: 1, groupUUID: groupUUID })
     },
 
     delete: async function  (req, res) {
@@ -61,6 +61,19 @@ const groupController = {
 
 
         res.status(200).json({ status:1 })
+    },
+
+    isJoin: async function  (req, res) {
+        const groupUUID = req.params.uuid
+        const userId = req.auth.userid
+
+        const result = await groupUserModel.select({
+            groupUUID: groupUUID,
+            userId: userId
+        })
+
+
+        res.status(200).json({ status: 1, group: result })
     },
 }
 

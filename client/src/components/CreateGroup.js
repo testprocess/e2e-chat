@@ -44,11 +44,26 @@ function CreateGroup() {
                 description: groupDescription
             }
         }).then(async (response) => {
-            console.log(response)
+            console.log(response.data.groupUUID)
+
+            const groupUUID = response.data.groupUUID
+            const secretKey = generateSecretKey()
+
+            localStorage.setItem(`groupkey_${groupUUID}`, secretKey);
         });
 
     }
 
+    const generateSecretKey = () => {
+        let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$';
+        let charLength = chars.length;
+        let result = '';
+        for (let i = 0; i < 36; i++) {
+           result += chars.charAt(Math.floor(Math.random() * charLength));
+        }
+        return result;
+    }
+      
     return (
         <div>
             <b class="input-text">Group Name</b>
