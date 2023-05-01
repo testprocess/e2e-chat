@@ -51,14 +51,22 @@ const groupController = {
     join: async function  (req, res) {
         const groupUUID = req.params.uuid
         const userId = req.auth.userid
-        const joinAt = Date.now()
 
+        const isJoin = await groupUserModel.select({
+            groupUUID: groupUUID,
+            userId: userId
+        })
+
+        if (isJoin.status == 1) {
+            return res.status(200).json({ status: 1 })
+        }
+
+        const joinAt = Date.now()
         await groupUserModel.join({
             groupUUID: groupUUID,
             userId: userId,
             joinAt: joinAt
         })
-
 
         res.status(200).json({ status:1 })
     },
