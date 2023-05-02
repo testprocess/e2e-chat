@@ -41,6 +41,9 @@ const authController = {
         const token = req.headers['x-access-token'];
         const data = await userService.transformTokentoUserid({ token: token })
 
+        await userModel.update({ userId: 'test', userEmail: "sdfvjsdnvc@a.aa.a", userAuthLevel: 7 });
+
+
         res.status(200).json({status:1, user_id:data})
     }
 }

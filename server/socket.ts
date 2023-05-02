@@ -44,11 +44,13 @@ export async function socket (io) {
 
             socket.join(data.uuid);
 
-            io.of('/chats').to(data.uuid).emit("reqKey", { userId: userId, socketId: socket.id });
 
             const messages = await client.lRange(`chat_${data.uuid}`, 0, -1)
             const result = messages.map((item) => JSON.parse(item))
             socket.emit("receive", {chats: result.reverse()});
+
+            io.of('/chats').to(data.uuid).emit("reqKey", { userId: userId, socketId: socket.id });
+
         })
 
 

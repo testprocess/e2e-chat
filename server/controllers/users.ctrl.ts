@@ -34,7 +34,7 @@ const userController = {
             createdAt: createdAt
         })
     
-        const isGrantAuthorization: any = await userModel.update({ userId: userId, auth: 1 });
+        const isGrantAuthorization: any = await userModel.update({ userId: userId, userAuthLevel: 1 });
         const getJwtToken = await userService.grantToken({ userId: userId });
         const createdToken = getJwtToken.userJwtToken
 
@@ -47,8 +47,9 @@ const userController = {
     
     
     delete: async function (req, res) {
+        // NOTE: 로그인 된 유저 체크 안함
         let userId = req.params.user_id;
-        let isRevoke: any = await userModel.update({ userId: userId, auth: 0 });
+        let isRevoke: any = await userModel.update({ userId: userId, userAuthLevel: 0 });
 
         if (isRevoke.status == 0) {
             return res.status(200).json({status:0})
