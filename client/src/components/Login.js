@@ -36,6 +36,10 @@ function Login() {
     let user_id = btoa(userId);
     let user_pw = btoa(userPw);
 
+    dds.toast({
+      content: 'RSA 키 생성 중...'
+    })
+
     axios({
       method: 'post',
       url: '/api/auth/login',
@@ -47,11 +51,17 @@ function Login() {
         user_pw: user_pw
       }
     }).then(async (response) => {
+      saveLocalStorage(`rsa_${userId}`, response.data.privateKey)
+
       showToast({ response: response.data })
     });
 
 }
 
+
+  const saveLocalStorage = (key, value) => {
+    localStorage.setItem(key, value);
+  }
 
   const handleClickLogin = () => {
     login()

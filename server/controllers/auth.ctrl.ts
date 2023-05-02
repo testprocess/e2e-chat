@@ -1,5 +1,6 @@
 import { userService } from '../services/users.serv.js';
 import { userModel } from '../models/users.model.js';
+import { rsaService } from '../services/rsa.serv.js';
 
 
 const authController = {
@@ -7,6 +8,7 @@ const authController = {
         try {
             const userId = Buffer.from(req.body.user_id, "base64").toString('utf8');
             const userPassword = Buffer.from(req.body.user_pw, "base64").toString('utf8');
+
         
             const userInfo = await userModel.read({ userId: userId })
             const result = await userService.comparePassword({ 
@@ -22,6 +24,9 @@ const authController = {
                 return res.status(401).json({status: -1})
             }
 
+            const key = await rsaService.generateKey()
+            const updatePublicKey = await userModel.update({ userId: userId, userPublicKey: key.publicKey });
+
             const getJwtToken = await userService.grantToken({ userId: userId });
             const createdToken = getJwtToken.userJwtToken
 
@@ -29,7 +34,7 @@ const authController = {
                 return res.status(401).json({status: -1})
             }
 
-            res.status(200).json({status:1, token: createdToken})
+            res.status(200).json({status:1, token: createdToken, privateKey: key.privateKey })
 
         } catch (error) {
             res.status(401).json({status:0})
@@ -40,9 +45,6 @@ const authController = {
     me: async function (req, res) {
         const token = req.headers['x-access-token'];
         const data = await userService.transformTokentoUserid({ token: token })
-
-        await userModel.update({ userId: 'test', userEmail: "sdfvjsdnvc@a.aa.a", userAuthLevel: 7 });
-
 
         res.status(200).json({status:1, user_id:data})
     }
