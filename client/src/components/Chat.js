@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { rsaUtil } from '../utils/rsa.js'
 import { default as axios } from 'axios';
 
 const socket = io("/chats", {
@@ -67,7 +68,7 @@ function ChatBox() {
         }
 
         const getPrivateKey = localStorage.getItem(`rsa_${thisUserName}`)
-        const decrypted = await decryptRsa({ privateKey: getPrivateKey, encrypted: data.key })
+        const decrypted = await rsaUtil.decrypt({ privateKey: getPrivateKey, encrypted: data.key })
         console.log(decrypted)
 
         localStorage.setItem(`groupkey_${thisGroupUUID}`, decrypted)
@@ -85,7 +86,7 @@ function ChatBox() {
         const getUser = await getUserInfomation({ userId: data.userId })
 
         const userPublicKey = getUser.data.publicKey
-        const encryptedKey = await encryptRsa({ publicKey: userPublicKey, message: getKey })
+        const encryptedKey = await rsaUtil.encrypt({ publicKey: userPublicKey, message: getKey })
 
         console.log("reqKey", encryptedKey, userPublicKey, getUser)
 
@@ -118,24 +119,7 @@ function ChatBox() {
         return result
     }
 
-    const encryptRsa = async ({ publicKey, message }) => {
-        let encrypt = new JSEncrypt()
-        encrypt.setPublicKey(publicKey)
-        const encrypted = encrypt.encrypt(message);
 
-        console.log("encryptRsa", encrypted, publicKey, message)
-
-        return encrypted
-    }
-    
-
-    const decryptRsa = async ({ privateKey, encrypted }) => {
-        let decrypt = new JSEncrypt()
-        decrypt.setPrivateKey(privateKey)
-        const undecrypt = decrypt.decrypt(encrypted);
-
-        return undecrypt
-    }
 
     const decryptMessage = ({ encrypted }) => {
         try {
