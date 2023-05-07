@@ -28,7 +28,7 @@ export async function socket (io) {
 
     chatNamespace.on("connection", (socket) => {
         socket.on("join", async (data) => {
-            console.log("Join", data.uuid)
+            console.log("==== Join ====", data.uuid)
             const token = socket.handshake.auth.token;
             const decoded = jwt.verify(token, jwtSecret);
             const userId = decoded.user_id;
@@ -55,13 +55,13 @@ export async function socket (io) {
 
 
         socket.on("send", (data) => {
-            console.log(data.uuid, data.message)
+            //console.log(data.uuid, data.message)
             client.lPush(`chat_${data.uuid}`, JSON.stringify(data))
             io.of('/chats').to(data.uuid).emit("receive", {chats: [{ message: data.message, userName: data.userName }]});
         })
 
         socket.on("sendKey", (data) => {
-            console.log(data.userId, data.key)
+            //console.log(data.userId, data.key)
             io.of('/chats').to(data.socketId).emit("receiveKey", { userId: data.userId, key: data.key });
         })
 

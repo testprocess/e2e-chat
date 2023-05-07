@@ -69,7 +69,7 @@ function ChatBox() {
 
         const getPrivateKey = localStorage.getItem(`rsa_${thisUserName}`)
         const decrypted = await rsaUtil.decrypt({ privateKey: getPrivateKey, encrypted: data.key })
-        console.log(decrypted)
+        //console.log(decrypted)
 
         localStorage.setItem(`groupkey_${thisGroupUUID}`, decrypted)
 
@@ -88,7 +88,7 @@ function ChatBox() {
         const userPublicKey = getUser.data.publicKey
         const encryptedKey = await rsaUtil.encrypt({ publicKey: userPublicKey, message: getKey })
 
-        console.log("reqKey", encryptedKey, userPublicKey, getUser)
+        console.log("reqKey")
 
         socket.emit('sendKey', {
             socketId: data.socketId,
