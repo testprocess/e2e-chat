@@ -61,7 +61,7 @@ export async function socket (io) {
         })
 
         socket.on("sendKey", (data) => {
-            //console.log(data.userId, data.key)
+            console.log(">> sendKey", data.userId)
             io.of('/chats').to(data.socketId).emit("receiveKey", { userId: data.userId, key: data.key });
         })
 

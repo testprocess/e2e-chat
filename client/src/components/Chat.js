@@ -2,38 +2,44 @@ import React, { useEffect, useRef, useState } from "react";
 import { rsaUtil } from '../utils/rsa.js'
 import { default as axios } from 'axios';
 
-const socket = io("/chats", {
-    auth: {
-        token: Cookies.get("user")
-    }
-});
 
-const getUserName = () => {
-    let token = Cookies.get("user")
-    try {
-        let decoded = JSON.parse(atob(token.split('.')[1]));
-        return decoded.user_id
-    } catch (error) {
-        return 'Any'
-    }
-}
-
-const thisUserName = getUserName()
-const thisGroupUUID = location.pathname.split("/")[location.pathname.split("/").length-1]
 
 function ChatBox() {
+    const getUserName = () => {
+        let token = Cookies.get("user")
+        try {
+            let decoded = JSON.parse(atob(token.split('.')[1]));
+            return decoded.user_id
+        } catch (error) {
+            return 'Any'
+        }
+    }
+
     const [UUID, setUUID] = useState('')
+    const [userName, setUserName] = useState(getUserName())
     const [messageLists, setMessageLists] = useState([])
+
     const called = useRef(false)
+
+    const socket = io("/chats", {
+        auth: {
+            token: Cookies.get("user")
+        }
+    });
+    
+
+    const thisGroupUUID = location.pathname.split("/")[location.pathname.split("/").length-1]
 
     useEffect(() => {
         if (called.current) {
             return
         }
-        const uuidFromPath = location.pathname.split("/")[location.pathname.split("/").length-1]
-        setUUID(uuidFromPath)
+
+        setUUID(thisGroupUUID)
+        console.log(userName)
+
         socket.emit('join', {
-            uuid: uuidFromPath
+            uuid: thisGroupUUID
         })
 
         called.current = true
@@ -57,34 +63,32 @@ function ChatBox() {
             }
         }
 
-        setMessageLists([...messageLists, ...lists])
+
+        setMessageLists(current => [...current, ...lists])
 
         scrollToBottom()
     })
 
     socket.on("receiveKey", async (data) => {
-        if (data.userId != thisUserName) {
+        if (data.userId != userName) {
             return 0
         }
 
-        const getPrivateKey = localStorage.getItem(`rsa_${thisUserName}`)
+        const getPrivateKey = localStorage.getItem(`rsa_${userName}`)
         const decrypted = await rsaUtil.decrypt({ privateKey: getPrivateKey, encrypted: data.key })
-        //console.log(decrypted)
 
         localStorage.setItem(`groupkey_${thisGroupUUID}`, decrypted)
-
     })
 
     
 
     socket.on("reqKey", async (data) => {
         const getKey = localStorage.getItem(`groupkey_${thisGroupUUID}`)
-        if (getKey == null || data.userId == thisUserName) {
+        if (getKey == null || data.userId == userName) {
             return 0
         }
 
         const getUser = await getUserInfomation({ userId: data.userId })
-
         const userPublicKey = getUser.data.publicKey
         const encryptedKey = await rsaUtil.encrypt({ publicKey: userPublicKey, message: getKey })
 
@@ -141,7 +145,7 @@ function ChatBox() {
 
     const mapMessages = messageLists.map((element) => {
         let message = decryptMessage({ encrypted: element.message })
-        return <ChatMessage userName={element.userName} message={message}></ChatMessage>
+        return <ChatMessage chatUserName={element.userName} userName={userName} message={message}></ChatMessage>
     })
 
 
@@ -151,7 +155,7 @@ function ChatBox() {
         <div className="m-3 padding-chat">
             {UUID}
             {mapMessages}
-            <ChatInput uuid={UUID}></ChatInput>
+            <ChatInput socket={socket} userName={userName} uuid={UUID}></ChatInput>
         </div>
     );
 }
@@ -171,10 +175,10 @@ function ChatInput(props) {
     }
 
     const sendMessage = () => {
-        socket.emit('send', {
+        props.socket.emit('send', {
             uuid: props.uuid,
             message: encryptMessage(message),
-            userName: thisUserName
+            userName: props.userName
         })
 
         setMessage('')
@@ -196,10 +200,10 @@ function ChatInput(props) {
 }
 
 
-function ChatMessage({ userName, message }) {
-    if (userName == thisUserName) {
+function ChatMessage({ chatUserName, userName, message }) {
+    if (chatUserName == userName) {
         return (
-            <div className="d-flex flex-row-reverse ">
+            <div className="d-flex flex-row-reverse mb-1">
                 <span className="bg-dark text-light p-2 text-end rounded">
                     {message}
                 </span>
@@ -209,9 +213,9 @@ function ChatMessage({ userName, message }) {
     }
 
     return (
-        <div className="d-flex flex-row ">
+        <div className="d-flex flex-row mb-1">
             <span className="bg-light p-2 text-end rounded">
-                {userName} : {message}
+                {chatUserName} : {message}
             </span>
         </div>
 
