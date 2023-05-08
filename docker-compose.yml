@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    ports:
+      - 9023:9023
     environment:
       DB_CLIENT: mysql
       DB_HOST: 172.17.0.1
