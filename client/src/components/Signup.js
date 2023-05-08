@@ -207,7 +207,9 @@ function Signup() {
                       <button className="btn btn-lg btn-primary btn-login fw-bold text-uppercase" onClick={handleClickSignup}>회원가입</button>
                     </div>
       
-                    <a className="d-block text-left mt-2 small" href="/auth/login">로그인 {">"}</a>
+                    <a className="d-block text-left mt-2 mb-2 small" href="/auth/login">로그인 {">"}</a>
+
+                    <SignupWarning></SignupWarning>
       
       
                 </div>
@@ -216,6 +218,17 @@ function Signup() {
           </div>
         </div>
     );
+  }
+
+  function SignupWarning() {
+    return (
+      <b className="text-secondary pt-2">이 서비스는 종단간 암호화 보안 채팅 테스트를 위한 서비스입니다. <br />
+       가입은 가능하되, 테스트 서비스임을 인지하시고 사용하시길 당부드립니다. 실 서비스를 사용하는데 있어 <b className="text-danger">정보유출, 해킹, 허가되지 않은 접근, 중간자공격</b>등에 노출되실 수 있습니다.   <br />
+       이 테스트 서비스에 실제 사용하시는 계정정보를 기입하시면 안됩니다. 또한 언제든 서비스는 중단될 수 있으며 그에따른 책임은 서비스를 사용하시는 당사자에게 있습니다.  <br />
+       <br />
+
+      이 서비스는 오픈소스로 공개되어 있습니다. 코드를 확인하시고 싶으신 분은 깃허브 링크로 방문해주세요.</b>
+    )
   }
   
   export default Signup;
