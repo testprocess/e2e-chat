@@ -6,13 +6,10 @@
   "main": "app.js",
   "scripts": {
     "test": "mocha",
-    
     "start": "NODE_ENV=production node app.js",
     "start:dev": "NODE_ENV=development node app.js",
-
     "bundle": "webpack --mode=production",
     "bundle:dev": "webpack --mode=development --watch",
-
     "build": "tsc -w"
   },
   "repository": {

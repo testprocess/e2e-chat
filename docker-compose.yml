@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+
+  main:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      DB_CLIENT: mysql
+      DB_HOST: 172.17.0.1
+      DB_USER: root
+      DB_PASS: pi1GfukVsan5UJGugWxF
+      DB_DATABASE: e2echat
+      DB_PORT: 13309
+      NODE_ENV: production
+      VIRTUAL_HOST: chat.devent.kr
+      LETSENCRYPT_HOST: chat.devent.kr
+      LETSENCRYPT_EMAIL: hhj@devent.kr
+    network_mode: "bridge"
+
+
+  db:
+    image: mysql:8.0
+    ports:
+      - 13309:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: pi1GfukVsan5UJGugWxF
+    volumes:
+      - .docker/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    network_mode: "bridge"
+
+  redis:
+    image: redis:latest
+    command: redis-server --port 6379
+    container_name: redis
+    hostname: redis
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379

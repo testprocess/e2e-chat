@@ -5,7 +5,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
-      - run: tsc
-      - run: npm run bundle
-      - run: pm2 start npm -- start
+      # - run: npm install
+      # - run: tsc
+      # - run: npm run bundle
+      # - run: pm2 start npm -- start
+      - run: docker-compose up
