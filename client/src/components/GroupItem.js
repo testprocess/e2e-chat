@@ -31,7 +31,7 @@ function GroupItem({ groupName, groupDescription, groupUUID }) {
     }
 
     return (
-        <div className="card" onClick={handleClick}>
+        <div className="card mb-2" onClick={handleClick}>
             <div className="card-body">
                 <h5 className="card-title">{groupName}</h5>
                 <p className="card-text text-muted">{groupDescription}</p>

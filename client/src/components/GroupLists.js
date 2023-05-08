@@ -42,8 +42,8 @@ function GroupLists() {
     }
 
     return (
-        <div>
-            <b class="input-text">Group List</b>
+        <div className="mt-4">
+            <b className="input-text">Group List</b>
             {groups.map((group) => (<GroupItem groupName={group.groupName} groupDescription={group.groupDescription} groupUUID={group.groupUUID}></GroupItem>))}
         </div>
     );
